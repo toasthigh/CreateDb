@@ -1,0 +1,1428 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react 학습 로드맵 - 인터랙티브 마인드맵</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .mindmap-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            min-width: 1200px;
+        }
+
+        .mindmap-title {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .root-node {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 25px;
+            font-size: 1.8em;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .root-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .main-branches {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .branch {
+            flex: 1;
+            min-width: 350px;
+            max-width: 400px;
+        }
+
+        .level-node {
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .beginner {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            color: white;
+        }
+
+        .intermediate {
+            background: linear-gradient(135deg, #FDBB2D, #22C1C3);
+            color: white;
+        }
+
+        .advanced {
+            background: linear-gradient(135deg, #FA8072, #FF6347);
+            color: white;
+        }
+
+        .community {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .level-node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .sub-branches {
+            margin-left: 20px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .sub-branches.expanded {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 1000px;
+            }
+        }
+
+        .sub-node {
+            background: rgba(255, 255, 255, 0.9);
+            border-left: 4px solid #3498db;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sub-node:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateX(5px);
+        }
+
+        .detail-node {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid #95a5a6;
+            padding: 8px 15px;
+            margin: 5px 0 5px 20px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: #2c3e50;
+        }
+
+        .resource-node {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 3px solid #2ecc71;
+            padding: 8px 15px;
+            margin: 5px 0 5px 20px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: #27ae60;
+        }
+
+        .book-node {
+            background: rgba(155, 89, 182, 0.1);
+            border-left: 3px solid #9b59b6;
+            padding: 8px 15px;
+            margin: 5px 0 5px 20px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: #8e44ad;
+        }
+
+        .resource-node a {
+            color: #2980b9;
+            text-decoration: underline;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 2px 4px;
+            border-radius: 3px;
+            background: rgba(41, 128, 185, 0.1);
+        }
+
+        .resource-node a:hover {
+            color: #ffffff;
+            background: #3498db;
+            text-decoration: none;
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .expand-icon {
+            float: right;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-icon.rotated {
+            transform: rotate(90deg);
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="mindmap-container">
+        <h1 class="mindmap-title">react 학습 로드맵</h1>
+
+        <div class="controls">
+            <button class="btn" onclick="expandAll()">전체 펼치기</button>
+            <button class="btn" onclick="collapseAll()">전체 접기</button>
+        </div>
+
+        <div class="mindmap">
+            <div class="root-node" onclick="toggleAllBranches()">
+                react 학습 로드맵
+            </div>
+
+            <div class="main-branches" id="mainBranches" style="display: none;">
+                
+                    <div class="branch">
+                        <div class="level-node beginner" onclick="toggleBranch('a6b035ff-5d08-4774-824e-a856e99b0466')">
+                            초급 (Beginner)
+                             <span class="expand-icon">▶</span>
+                        </div>
+                        <div class="sub-branches" id="a6b035ff-5d08-4774-824e-a856e99b0466">
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('0ce2c472-a146-4541-9e7f-4c0aa093accf')">
+                                    필수 선수 과목 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="0ce2c472-a146-4541-9e7f-4c0aa093accf">
+                                    
+                                        
+                                            <div class="detail-node">HTML & CSS: 웹 페이지의 구조와 스타일링을 위한 기본 언어</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://developer.mozilla.org/ko/docs/Web/HTML" target="_blank">MDN HTML 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://developer.mozilla.org/ko/docs/Web/CSS" target="_blank">MDN CSS 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=88PXJAA6szs" target="_blank">생활코딩 HTML/CSS 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">JavaScript (ES6+): React 포함 모든 프론트엔드 프레임워크의 기반. 화살표 함수, 클래스, 비구조화 할당, 모듈 등 ES6+ 문법 필수</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://ko.javascript.info/" target="_blank">모던 자바스크립트 튜토리얼</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=W6NZfCO5SIk" target="_blank">드림코딩 JavaScript 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript" target="_blank">MDN JavaScript 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=Oe421EPjeBE" target="_blank">노마드코더 JavaScript 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="book-node">
+                                                
+                                                
+                                                    📚 📚 추천 책: 『모던 JavaScript 튜토리얼』
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Git & GitHub 기초: 버전 관리 시스템. 협업 및 코드 관리에 필수</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📚
+                                                    
+                                                    <a href="https://git-scm.com/book/ko/v2" target="_blank">Git 공식 문서 (한국어)</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=1I3hMwQU6GU" target="_blank">생활코딩 Git 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://github.com/explore" target="_blank">GitHub 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=3RjQznt-8kE" target="_blank">드림코딩 Git & GitHub</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('c72163db-5548-481f-b5e3-38106be78d81')">
+                                    핵심 개념 및 기술 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="c72163db-5548-481f-b5e3-38106be78d81">
+                                    
+                                        
+                                            <div class="detail-node">React 개요: React가 무엇인지, 왜 사용하는지, 어떤 특징(컴포넌트 기반, 선언적, 가상 DOM)을 가지는지 이해</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">JSX: JavaScript 확장 문법으로, React에서 UI를 작성하는 방식</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">컴포넌트 (함수 vs 클래스): React 앱의 기본 빌딩 블록. 사용법 및 차이점 이해</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Props: 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달하는 방법</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">State (useState 훅): 컴포넌트 내부에서 관리되는 변경 가능한 데이터</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">이벤트 핸들링: 사용자 인터랙션(클릭, 입력 등)을 처리하는 방법</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">조건부 렌더링: 특정 조건에 따라 다른 UI를 보여주는 방법</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">리스트 렌더링과 `key`: 배열 데이터를 사용하여 여러 컴포넌트를 렌더링하는 방법과 `key`의 중요성 이해</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">React 개발 환경 설정: `create-react-app` 또는 Vite를 사용하여 프로젝트 시작</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">기본 CSS 스타일링: 컴포넌트에 CSS를 적용하는 방법 (인라인, CSS 모듈, CSS-in-JS 개념)</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://ko.react.dev/" target="_blank">React 공식 문서 (한국어)</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=w7ejDZ8SWv8" target="_blank">드림코딩 React 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://velopert.com/reactjs-tutorials" target="_blank">벨로퍼트 React 튜토리얼</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=w5s2UoWvNQY" target="_blank">노마드코더 React 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="book-node">
+                                                
+                                                    📚 <a href="https://react.vlpt.us/" target="_blank">벨로퍼트 React 강의 (PDF 스타일)</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=0yWAtQ6wYNM" target="_blank">코딩애플 React 강의</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="book-node">
+                                                
+                                                
+                                                    📚 📚 추천 책: 『리액트를 다루는 기술』 (김민준 저), 『혼자 공부하는 머신러닝+딥러닝』 (박해선 저)
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('3406277e-5ff2-4a50-afd8-de184828d4db')">
+                                    주요 라이브러리/도구 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="3406277e-5ff2-4a50-afd8-de184828d4db">
+                                    
+                                        
+                                            <div class="detail-node">Node.js & npm/yarn: React 개발 환경 구축 및 패키지 관리</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Create React App / Vite: React 프로젝트를 빠르게 시작하는 도구</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://nodejs.org/ko/docs" target="_blank">Node.js 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://create-react-app.dev/docs/getting-started/" target="_blank">Create React App 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://vitejs.dev/guide/" target="_blank">Vite 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="branch">
+                        <div class="level-node intermediate" onclick="toggleBranch('470dee89-8862-47a6-b79e-e765f86e6bfe')">
+                            중급 (Intermediate)
+                             <span class="expand-icon">▶</span>
+                        </div>
+                        <div class="sub-branches" id="470dee89-8862-47a6-b79e-e765f86e6bfe">
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('514d7c20-6b89-4be8-9418-7dbdf001d805')">
+                                    핵심 개념 및 기술 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="514d7c20-6b89-4be8-9418-7dbdf001d805">
+                                    
+                                        
+                                            <div class="detail-node">Hooks 심화: 더 복잡한 상태 및 사이드 이펙트 관리</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• useEffect: 사이드 이펙트(데이터 가져오기, DOM 조작 등) 처리</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• useRef: DOM 요소 접근, 렌더링과 무관한 값 유지</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• useMemo / useCallback: 성능 최적화를 위한 훅</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• useReducer: 복잡한 상태 로직 관리에 유용</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• useContext: 전역적인 상태 관리를 위한 훅</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://ko.react.dev/reference/react" target="_blank">React Hooks 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=G3qglTF-fFI" target="_blank">드림코딩 React Hooks</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">React Router: SPA에서 라우팅(페이지 이동)을 구현하는 표준 라이브러리. `BrowserRouter`, `Routes`, `Route`, `Link` 등</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://reactrouter.com/en/main" target="_blank">React Router 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=CHHXeHVK-8U" target="_blank">벨로퍼트 React Router</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">상태 관리 라이브러리: 복잡하고 큰 규모의 앱을 위한 상태 관리</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• Redux (또는 Redux Toolkit): 예측 가능한 상태 관리를 위한 라이브러리 (Actions, Reducers, Store)</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• Context API: 간단한 전역 상태 관리에 사용</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">• 기타: Zustand, Recoil, Jotai (Redux보다 가볍고 사용하기 쉬운 대안)</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://redux.js.org/introduction/getting-started" target="_blank">Redux 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=QZcYz2NrPIs" target="_blank">벨로퍼트 Redux 강의</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://redux-toolkit.js.org/" target="_blank">Redux Toolkit 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=9DU7wZr5bdA" target="_blank">드림코딩 Redux Toolkit</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">비동기 처리: `fetch` API 또는 `Axios`를 사용하여 서버에서 데이터 가져오기</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">커스텀 훅 (Custom Hooks): 반복되는 로직을 재사용 가능한 훅으로 만들기</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">성능 최적화 기초: `React.memo` 활용</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">React Life Cycle 이해: 컴포넌트 생명주기 메서드 및 `useEffect`로 생명주기 동작 시뮬레이션</div>
+                                        
+                                    
+                                        
+                                            <div class="book-node">
+                                                
+                                                
+                                                    📚 📚 추천 책: 『리액트를 다루는 기술』 (김민준 저), 『모던 리액트 Deep Dive』 (김용찬 저)
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('c3402833-7b5e-41f7-9867-8b78b57f9387')">
+                                    주요 라이브러리/도구 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="c3402833-7b5e-41f7-9867-8b78b57f9387">
+                                    
+                                        
+                                            <div class="detail-node">React Router v6+</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Redux / Redux Toolkit</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Axios</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">ESLint, Prettier: 코드 품질 유지 및 일관된 코드 스타일 적용</div>
+                                        
+                                    
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="branch">
+                        <div class="level-node advanced" onclick="toggleBranch('9acdac1f-fd59-495d-ad09-53c45d8e8260')">
+                            고급 (Advanced)
+                             <span class="expand-icon">▶</span>
+                        </div>
+                        <div class="sub-branches" id="9acdac1f-fd59-495d-ad09-53c45d8e8260">
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('fb5b21b6-b901-4692-8d99-6bd422207412')">
+                                    TypeScript <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="fb5b21b6-b901-4692-8d99-6bd422207412">
+                                    
+                                        
+                                            <div class="detail-node">TypeScript: JavaScript에 정적 타입을 추가하여 코드 안정성과 가독성 향상</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">React와 TypeScript 연동: 대규모 프로젝트에서 필수적</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://www.typescriptlang.org/ko/" target="_blank">TypeScript 공식 문서 (한국어)</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=BwuLxPH8IDs" target="_blank">드림코딩 TypeScript 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://typescript-kr.github.io/" target="_blank">TypeScript 한국어 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=0yWAtQ6wYNM" target="_blank">코딩애플 TypeScript 강의</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://react.vlpt.us/using-typescript/" target="_blank">벨로퍼트 React + TypeScript</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('100d180b-0a32-437c-b9cb-de08693c8cd6')">
+                                    프레임워크 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="100d180b-0a32-437c-b9cb-de08693c8cd6">
+                                    
+                                        
+                                            <div class="detail-node">Next.js / Remix: React 기반의 풀스택 프레임워크</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">SSR, SSG, ISR (렌더링 방식): SEO 개선 및 초기 로딩 성능 향상</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">API 라우트: 백엔드 API 기능 내장</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">데이터 페칭 전략: 다양한 데이터 로딩 방식 이해</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://nextjs.org/ko/docs" target="_blank">Next.js 공식 문서 (한국어)</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=1zV1x4VqR8g" target="_blank">드림코딩 Next.js 기초</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://vercel.com/docs" target="_blank">Vercel 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=6aP9nyTcd44" target="_blank">노마드코더 Next.js 강의</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://remix.run/docs/en/main" target="_blank">Remix 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=0yWAtQ6wYNM" target="_blank">코딩애플 Next.js 강의</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="book-node">
+                                                
+                                                
+                                                    📚 📚 추천 책: 『실전 Next.js』 (김정환 저)
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('bf536424-3d6e-454d-818c-df8969f6de55')">
+                                    테스팅 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="bf536424-3d6e-454d-818c-df8969f6de55">
+                                    
+                                        
+                                            <div class="detail-node">단위 테스트 (Jest, React Testing Library): 개별 컴포넌트나 함수 테스트</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">통합 테스트: 여러 컴포넌트 또는 모듈이 함께 작동하는지 테스트</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">E2E 테스트 (Cypress, Playwright 개념): 사용자 시나리오 전체 흐름 테스트</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://testing-library.com/docs/react-testing-library/intro/" target="_blank">React Testing Library 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=GLSSRtnNY0g" target="_blank">드림코딩 React 테스팅</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://jestjs.io/ko/" target="_blank">Jest 공식 문서 (한국어)</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=7dTTFW7yACQ" target="_blank">벨로퍼트 React 테스팅</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://docs.cypress.io/" target="_blank">Cypress 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/watch?v=0yWAtQ6wYNM" target="_blank">코딩애플 테스팅 강의</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('e8cf47e3-0c48-4f78-853a-676bdf6c6270')">
+                                    핵심 개념 및 기술 (고급 심화) <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="e8cf47e3-0c48-4f78-853a-676bdf6c6270">
+                                    
+                                        
+                                            <div class="detail-node">성능 최적화 심화: 번들 최적화, 이미지 최적화, 코드 스플리팅, 웹 워커 (개념)</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">상태 관리 심화: TanStack Query (React Query) 등 비동기 상태 관리 라이브러리 활용</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://tanstack.com/query/latest/docs/react/overview" target="_blank">TanStack Query 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="book-node">
+                                                
+                                                
+                                                    📚 📚 추천 책: 『React Query 완벽 가이드』 (강대명 저)
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">컴포넌트 디자인 시스템 (Storybook): 재사용 가능한 UI 컴포넌트 개발 및 문서화</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://storybook.js.org/docs/react/get-started/introduction" target="_blank">Storybook 공식 문서</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">웹 접근성 (Web Accessibility): 모든 사용자가 웹 콘텐츠에 동등하게 접근할 수 있도록 하는 방법</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://developer.mozilla.org/ko/docs/Web/Accessibility" target="_blank">MDN 웹 접근성 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">애플리케이션 배포 (Deployment): Vercel, Netlify, AWS Amplify 등 서비스를 이용한 배포</div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://vercel.com/docs/deployments" target="_blank">Vercel 배포 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📖
+                                                    
+                                                    <a href="https://docs.netlify.com/get-started/" target="_blank">Netlify 시작 가이드</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Node.js & 백엔드 이해: API 연동 및 풀스택 개발에 대한 이해</div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('c448cbee-03a4-4ee3-a22c-04e94e3d9a1a')">
+                                    주요 라이브러리/도구 (고급) <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="c448cbee-03a4-4ee3-a22c-04e94e3d9a1a">
+                                    
+                                        
+                                            <div class="detail-node">TypeScript</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Next.js / Remix</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Jest, React Testing Library</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">TanStack Query (React Query)</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Storybook</div>
+                                        
+                                    
+                                        
+                                            <div class="detail-node">Cypress / Playwright</div>
+                                        
+                                    
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="branch">
+                        <div class="level-node community" onclick="toggleBranch('81a78c72-2845-471c-8b92-5ea7867e8279')">
+                            추천 커뮤니티
+                             <span class="expand-icon">▶</span>
+                        </div>
+                        <div class="sub-branches" id="81a78c72-2845-471c-8b92-5ea7867e8279">
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('8b132a95-1d50-4ae1-a3de-a9bb89c0f0bd')">
+                                    국내 온라인 커뮤니티/카페 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="8b132a95-1d50-4ae1-a3de-a9bb89c0f0bd">
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    📚
+                                                    
+                                                    <a href="https://www.facebook.com/groups/react.ko/" target="_blank">React Korea (페이스북 그룹):</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://velopert.com/" target="_blank">벨로퍼트 개발자 커뮤니티:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://cafe.naver.com/codinguniv" target="_blank">네이버 카페 '생활코딩':</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://cafe.naver.com/frontendcafe" target="_blank">네이버 카페 '프론트엔드 개발자 모임':</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://developers.google.com/community/gdsc" target="_blank">GDSC (Google Developers Student Clubs):</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('1de128a4-58e7-4705-9162-8066db5723ce')">
+                                    해외 온라인 커뮤니티/포럼 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="1de128a4-58e7-4705-9162-8066db5723ce">
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://stackoverflow.com/questions/tagged/reactjs" target="_blank">Stack Overflow:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://www.reddit.com/r/reactjs/" target="_blank">Reddit (r/reactjs):</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🔗
+                                                    
+                                                    <a href="https://discord.gg/reactiflux" target="_blank">Discord/Slack 채널 (Reactiflux 등):</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                                <div class="sub-node" onclick="toggleSubBranch('e0227ce8-6817-47b1-afcb-c0ab3374d4b5')">
+                                    유튜브 채널 <span class="expand-icon">▶</span>
+                                </div>
+                                <div class="sub-branches" id="e0227ce8-6817-47b1-afcb-c0ab3374d4b5">
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/@dreamcoding" target="_blank">드림코딩 by 엘리:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/@codingapple" target="_blank">코딩애플:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/@nomadcoders" target="_blank">노마드 코더스:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/@react" target="_blank">React (Official Channel):</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/@GoogleDevelopersKorea" target="_blank">Google Developers Korea:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                        
+                                            <div class="resource-node">
+                                                
+                                                    🎥
+                                                    
+                                                    <a href="https://www.youtube.com/@velopert" target="_blank">벨로퍼트:</a>
+                                                
+                                                
+                                            </div>
+                                        
+                                    
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mainBranchesVisible = false;
+
+        function toggleAllBranches() {
+            const mainBranches = document.getElementById('mainBranches');
+            mainBranchesVisible = !mainBranchesVisible;
+            mainBranches.style.display = mainBranchesVisible ? 'flex' : 'none';
+        }
+
+        function toggleBranch(branchId) {
+            const branch = document.getElementById(branchId);
+            const icon = event.currentTarget.querySelector('.expand-icon');
+            
+            if (branch.style.display === 'none' || branch.style.display === '') {
+                branch.style.display = 'block';
+                branch.classList.add('expanded');
+                icon.classList.add('rotated');
+                icon.innerHTML = '▼';
+            } else {
+                branch.style.display = 'none';
+                branch.classList.remove('expanded');
+                icon.classList.remove('rotated');
+                icon.innerHTML = '▶';
+            }
+        }
+
+        function toggleSubBranch(subBranchId) {
+            const subBranch = document.getElementById(subBranchId);
+            const icon = event.currentTarget.querySelector('.expand-icon');
+            
+            if (subBranch.style.display === 'none' || subBranch.style.display === '') {
+                subBranch.style.display = 'block';
+                subBranch.classList.add('expanded');
+                icon.classList.add('rotated');
+                icon.innerHTML = '▼';
+            } else {
+                subBranch.style.display = 'none';
+                subBranch.classList.remove('expanded');
+                icon.classList.remove('rotated');
+                icon.innerHTML = '▶';
+            }
+        }
+
+        function expandAll() {
+            const mainBranches = document.getElementById('mainBranches');
+            mainBranches.style.display = 'flex';
+            mainBranchesVisible = true;
+
+            const allBranches = document.querySelectorAll('.sub-branches');
+            const allIcons = document.querySelectorAll('.expand-icon');
+            
+            allBranches.forEach(branch => {
+                branch.style.display = 'block';
+                branch.classList.add('expanded');
+            });
+            
+            allIcons.forEach(icon => {
+                icon.classList.add('rotated');
+                icon.innerHTML = '▼';
+            });
+        }
+
+        function collapseAll() {
+            const mainBranches = document.getElementById('mainBranches');
+            mainBranches.style.display = 'none';
+            mainBranchesVisible = false;
+
+            const allBranches = document.querySelectorAll('.sub-branches');
+            const allIcons = document.querySelectorAll('.expand-icon');
+            
+            allBranches.forEach(branch => {
+                branch.style.display = 'none';
+                branch.classList.remove('expanded');
+            });
+            
+            allIcons.forEach(icon => {
+                icon.classList.remove('rotated');
+                icon.innerHTML = '▶';
+            });
+        }
+    </script>
+</body>
+</html>
